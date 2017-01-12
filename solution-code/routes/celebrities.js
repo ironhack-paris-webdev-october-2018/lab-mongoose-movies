@@ -4,7 +4,7 @@ var router = express.Router();
 const Celebrity = require('../models/celebrity');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/celebrities', function(req, res, next) {
   Celebrity.find({}, (err, celebritiesArray) => {
     if (err) { return next(err); }
 
@@ -15,14 +15,14 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/new', function(req, res, next) {
+router.get('/celebrities/new', function(req, res, next) {
   res.render('celebrities/new', {
     title: "Build Your Celebrity's Profile"
   });
 
 });
 
-router.post('/', function(req, res, next) {
+router.post('/celebrities', function(req, res, next) {
   const theCelebrity = new Celebrity ({
     name: req.body.name,
     gender: req.body.gender,
