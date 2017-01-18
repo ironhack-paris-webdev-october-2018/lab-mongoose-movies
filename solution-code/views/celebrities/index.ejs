@@ -9,7 +9,16 @@
     <ul>
       <% celebrities.forEach( (theCelebrity) => { %>
         <li>
-          <%= theCelebrity.name %> - <%= theCelebrity.occupation %>
+          <a href="/celebrities/<%= theCelebrity._id %>">
+            <%= theCelebrity.name %>
+          </a>
+          - <%= theCelebrity.occupation %>
+          <a href="/celebrities/<%= theCelebrity._id %>/edit">
+            Edit
+          </a>
+          <form action="/celebrities/<%= theCelebrity._id %>/delete" method="POST">
+            <button> Delete </button>
+          </form>
         </li>
       <% }); %>
     </ul>

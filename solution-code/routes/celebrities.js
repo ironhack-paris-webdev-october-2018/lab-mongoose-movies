@@ -22,14 +22,13 @@ router.get('/celebrities/new', function(req, res, next) {
 
 });
 
+
+
 router.post('/celebrities', function(req, res, next) {
   const theCelebrity = new Celebrity ({
     name: req.body.name,
-    gender: req.body.gender,
     occupation: req.body.occupation,
     catchPhrase: req.body.catchPhrase,
-    netWorth: req.body.netWorth,
-    isDeceased: req.body.isDeceased
   });
 
   theCelebrity.save ((err) => {
@@ -44,9 +43,54 @@ router.post('/celebrities', function(req, res, next) {
   })
 });
 
+router.get('/celebrities/:id', function (req, res, next) {
+  Celebrity.findOne({_id: req.params.id}, (err, theCelebrity) => {
+    if (err) { return next(err); }
+    res.render('celebrities/show', {
+      title: `${theCelebrity.name} Details`,
+      celebrity: theCelebrity
+    });
+  });
+
+});
 
 
+router.get('/celebrities/:id/edit', function (req, res, next) {
+  Celebrity.findOne({ _id: req.params.id }, (err, theCelebrity) => {
+    if (err) { return next(err); }
 
+    res.render('celebrities/edit', {
+      title: `Edit ${theCelebrity.name}`,
+      celebrity: theCelebrity
+    });
+  });
+});
+
+
+router.post('/celebrities/:id', function (req, res, next) {
+  const updatedCelebrity = {
+    name: req.body.name,
+    occupation: req.body.occupation,
+    catchPhrase: req.body.catchPhrase,
+  }
+  Celebrity.update({_id: req.params.id}, updatedCelebrity, (err, theCelebrity) => {
+    if (err) {return next(err); }
+
+    res.redirect('/celebrities');
+  });
+});
+
+router.post('/celebrities/:id/delete', function(req, res, next) {
+  Celebrity.findOne({ _id: req.params.id }, (err, theCelebrity) => {
+    if (err) { return next(err); }
+
+    theCelebrity.remove((err) => {
+      if (err) { return next(err); }
+
+      res.redirect('/celebrities');
+    });
+  });
+});
 
 
 

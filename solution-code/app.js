@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 const celebrities = require('./routes/celebrities');
+const movies = require('./routes/movies');
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/mongoose-movies-development');
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/', celebrities);
+app.use('/', movies);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
