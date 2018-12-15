@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/mongoose-movies-development');
+// Use bluebird Promise library
+mongoose.Promise = require('bluebird');
 
 const Celebrity = require('../models/celebrity');
 const Movie = require('../models/movie');
@@ -20,7 +21,7 @@ const movies = [
     plot: "Rob Schneider is an ordinary Wall-Street executive.  He's got the car, the girlfriend, the money; he's got the life!  But he's about to find what it's like to be... a fork! Rob Scheider is... The Fork!",
     genre: "Comedy"
   },
-]
+];
 
 const celebrities = [
   {
@@ -45,18 +46,37 @@ const celebrities = [
   }
 ];
 
-Celebrity.create(celebrities, (err, savedCelebrities) => {
-  if (err) { throw err; }
-
-  Movie.create(movies, (err, savedMOvies) => {
-    if (err) { throw err; }
-    savedMovies.forEach(theMovie => {
-      console.log(`${theMovie.title} - ${theMovie._id}`);
-    });
+mongoose.connect('mongodb://localhost/mongoose-movies-development',{
+  useMongoClient: true,
+})
+.then((res) => {
+  Celebrity.deleteMany({}, (err) => {
+    if (err) {throw err;}
   });
-
+})
+.then((res) => {
+  return Celebrity.create(celebrities, (err, savedCelebrities) => {
+  if (err) { throw err; }
+ });
+}).then((savedCelebrities) => {
   savedCelebrities.forEach(theCelebrity => {
     console.log(`${theCelebrity.name} - ${theCelebrity._id}`);
   });
+  return Movie.deleteMany({}, (err) => { if (err) {throw err;}
+  });
+}).then((res) => {
+  return Movie.create(movies, (err, savedMovies) => {
+      if (err) { throw err; }
+  });
+})
+.then((savedMovies) => {
+  savedMovies.forEach(theMovie => {
+    console.log(`${theMovie.title} - ${theMovie._id}`);
+  });
   mongoose.disconnect();
+})
+.catch(err => {
+  console.error(err);
+  // mongoose.disconnect();
+  process.exit();
 });
